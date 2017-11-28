@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/background"
+    tools:context="mahsa.com.onlineresturauntbookingsystem.ui.LoginActivity">
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Mahsa's Restaurant"
+        style="@style/textStyle"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="58dp"
+        android:id="@+id/main_header"/>
+
+    <EditText
+        android:id="@+id/login_input_email"
+        style="@style/InputField.Credential.Email"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/input_background"
+        android:hint="Email"
+        android:layout_centerVertical="true"
+        />
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Password"
+        android:background="@drawable/input_background"
+        android:id="@+id/login_input_password"
+        android:layout_below="@+id/login_input_email"
+        android:layout_marginTop="12dp"
+        style="@style/InputField.Credential.Password"
+        />
+
+
+    <Button
+        android:id="@+id/main_login_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/btn_background"
+        android:text="Login"
+        style="@style/btnStyle"
+        android:textColor="@color/colorText"
+        android:layout_below="@+id/login_input_password"
+        android:layout_marginTop="12dp"
+        />
+
+
+    <Button
+        android:id="@+id/activity_login_register_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/btn_background"
+        android:text="Need a new account"
+        style="@style/btnStyle"
+        android:textColor="@color/colorText"
+        android:layout_alignParentBottom="true"
+
+        />
+
+
+</RelativeLayout>

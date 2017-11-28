@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+    >
+
+
+    <RatingBar
+        android:id="@+id/fragment_review_rating_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:numStars="5"
+        android:stepSize="1.0"
+        android:rating="3.0"
+        />
+
+    <TextView
+        android:id="@+id/fragment_review_rater"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Mahsa"
+        android:textSize="12sp"
+        android:paddingBottom="4dp"
+        />
+
+    <TextView
+        android:id="@+id/review_description"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="So delicious! The food was amazing and the service was great! Would definitely go again"
+        android:textSize="14sp"
+        android:textColor="@color/colorBlueGray"
+        android:layout_marginTop="8dp"
+        />
+
+
+</LinearLayout>

@@ -1,0 +1,40 @@
+<resources>
+    <string name="app_name">Resturaunt Booking System</string>
+    <string name="title_activity_restaurant_detail">RestaurantDetailActivity</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string-array name="spinner_person">
+        <item name="1">1 person</item>
+        <item name="2">2 persons</item>
+        <item name="3">3 persons</item>
+        <item name="4">4 persons</item>
+        <item name="5">5 persons</item>
+        <item name="6">6 persons</item>
+        <item name="7">7 persons</item>
+        <item name="8">8 persons</item>
+        <item name="9">9 persons</item>
+        <item name="10">10 persons</item>
+        <item name="11">11 persons</item>
+    </string-array>
+
+
+    <string-array name="spinner_time">
+        <item name="1">10:30am-12:30pm</item>
+        <item name="2">12:30pm-02:30pm</item>
+        <item name="3">02:30pm-03:30pm</item>
+        <item name="4">03:30pm-04:30pm</item>
+        <item name="5">06:30pm-08:30pm</item>
+        <item name="6">08:30pm-10:30pm</item>
+        <item name="7">10:30pm-12:30pm</item>
+    </string-array>
+    <string name="title_activity_maps">Map</string>
+    <string name="error_title">No Internet</string>
+    <string name="error_message">Please Check your connection</string>
+    <string name="error_ok_button_text">OK</string>
+    <string name="writeToUs">We hope you have enjoyed at our restaurant. For comments,compliments and enquiries please write to us below</string>
+    <string name="title_activity_map">Map</string>
+
+
+</resources>

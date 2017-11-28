@@ -1,0 +1,71 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             xmlns:tools="http://schemas.android.com/tools"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             tools:context="mahsa.com.onlineresturauntbookingsystem.fragments.RateUSFragment">
+
+    <!-- TODO: Update blank fragment layout -->
+    <TextView
+        android:id="@+id/thankyou_txt"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Thank You"
+        android:textSize="32sp"
+        android:gravity="center_horizontal"
+        android:textColor="@color/colorBlueGray"
+        android:fontFamily="sans-serif-smallcaps"
+        />
+
+    <TextView
+        android:id="@+id/fragment_rate_us_hardcoded_writetous"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/writeToUs"
+        android:layout_below="@+id/thankyou_txt"
+        android:layout_margin="16dp"
+        android:textSize="18sp"
+
+        />
+
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                  android:orientation="vertical"
+                  android:layout_width="match_parent"
+                  android:layout_height="match_parent"
+                  android:layout_below="@id/fragment_rate_us_hardcoded_writetous"
+        >
+
+
+    <RatingBar
+        android:id="@+id/fragment_rate_us_rating_bar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:numStars="5"
+        android:stepSize="1.0"
+        android:rating="0.0"
+        android:layout_gravity="center"
+        />
+
+        <EditText
+            android:id="@+id/fragment_rate_us_edit_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Write here"
+            android:layout_margin="8dp"
+
+            />
+
+        <Button
+            android:id="@+id/fragment_rate_us_submit_btn"
+            style="@style/btnStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/btn_background"
+            android:text="Submit"
+            android:textColor="@color/colorText"
+            android:layout_marginTop="40dp"
+
+            />
+
+    </LinearLayout>
+</RelativeLayout>

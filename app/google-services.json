@@ -1,0 +1,99 @@
+{
+  "project_info": {
+    "project_number": "400996851890",
+    "firebase_url": "https://restaurant-booking-system.firebaseio.com",
+    "project_id": "restaurant-booking-system",
+    "storage_bucket": "restaurant-booking-system.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:400996851890:android:a73c5b2d3d7b601e",
+        "android_client_info": {
+          "package_name": "mahsa.com.onlineresturauntbookingsystem"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "400996851890-bum7u5puvf2a3fqopsasn4dk48n77tl7.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "mahsa.com.onlineresturauntbookingsystem",
+            "certificate_hash": "b3524f1342ca6fa3642abb8cd511639cfc778bd6"
+          }
+        },
+        {
+          "client_id": "400996851890-88empafre0oksgfj35hp5mt4b7un6fb0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDXk_7obJEntAqSDppy3Mvfiwzj8Op2-qU"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "400996851890-88empafre0oksgfj35hp5mt4b7un6fb0.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:400996851890:android:7f4e08a2be8120e9",
+        "android_client_info": {
+          "package_name": "mahsa.com.onlinerestaurantmanagementsystem"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "400996851890-vh1efu95q4r6ekorbi14joq4cj1h4h52.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "mahsa.com.onlinerestaurantmanagementsystem",
+            "certificate_hash": "b3524f1342ca6fa3642abb8cd511639cfc778bd6"
+          }
+        },
+        {
+          "client_id": "400996851890-88empafre0oksgfj35hp5mt4b7un6fb0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDXk_7obJEntAqSDppy3Mvfiwzj8Op2-qU"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "400996851890-88empafre0oksgfj35hp5mt4b7un6fb0.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

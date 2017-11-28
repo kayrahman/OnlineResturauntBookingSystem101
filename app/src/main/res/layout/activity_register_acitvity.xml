@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/background"
+    tools:context="mahsa.com.onlineresturauntbookingsystem.ui.RegisterAcitvity">
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Register"
+        style="@style/textStyle"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="58dp"
+        android:id="@+id/main_header"/>
+
+    <EditText
+        android:id="@+id/register_input_name"
+        style="@style/InputField.Credential.Email"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/input_background"
+        android:hint="Name"
+        android:layout_centerVertical="true"
+        />
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Email"
+        android:background="@drawable/input_background"
+        style="@style/InputField.Credential.Email"
+        android:id="@+id/register_input_email"
+        android:layout_below="@+id/register_input_name"
+        android:layout_marginTop="12dp"
+        />
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Password"
+        android:background="@drawable/input_background"
+        style="@style/InputField.Credential.Password"
+        android:id="@+id/register_input_password"
+        android:layout_marginTop="17dp"
+        android:layout_below="@+id/register_input_email"
+        />
+
+
+    <Button
+        android:id="@+id/register_submit_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#70E1BEE7"
+        android:text="Submit"
+        android:textStyle="bold"
+        style="@style/btnStyle"
+        android:textColor="@color/colorText"
+        android:layout_below="@+id/register_input_password"
+        android:layout_marginTop="12dp"
+
+        />
+
+</RelativeLayout>

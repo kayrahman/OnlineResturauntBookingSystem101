@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginBottom="4dp"
+    >
+
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        >
+
+
+
+        <ImageView
+            android:id="@+id/cardview_image"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:scaleType="fitXY"
+            android:src="@drawable/res_photo"
+            android:layout_margin="4dp"
+            android:elevation="4dp"
+            android:layout_weight="1"
+            />
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="2"
+            android:layout_margin="4dp"
+            >
+
+        <TextView
+            android:id="@+id/cardview_res_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Nook- Aloft Kuala Lumpur"
+            android:textColor="#101010"
+            android:fontFamily="serif"
+
+            />
+
+        <TextView
+            android:id="@+id/cardview_res_type"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/cardview_res_title"
+            android:text="Malaysian"
+            android:layout_marginTop="4dp"
+            android:textSize="12sp"
+
+            />
+
+            <TextView
+                android:id="@+id/cardview_res_list_place"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Kuala Lumpur"
+                android:layout_below="@+id/cardview_res_type"
+                android:textSize="12sp"
+                android:layout_marginTop="4dp"
+                />
+
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+</android.support.v7.widget.CardView>
