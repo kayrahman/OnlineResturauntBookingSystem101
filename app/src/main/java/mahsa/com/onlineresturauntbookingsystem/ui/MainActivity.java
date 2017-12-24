@@ -15,6 +15,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.AppCompatEditText;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -28,7 +29,14 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.firebase.geofire.GeoFire;
+import com.firebase.geofire.GeoLocation;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
+import com.google.android.gms.location.places.ui.PlaceSelectionListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -40,8 +48,10 @@ import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import mahsa.com.onlineresturauntbookingsystem.R;
@@ -58,7 +68,7 @@ public class MainActivity extends AppCompatActivity implements OnRestaurantListS
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mListener;
 
-    private DatabaseReference mDatabaseReference;
+    private DatabaseReference mDatabaseRestaurant;
     private DatabaseReference mDatabaseUser;
 
     private RecyclerView mRecyclerView;
@@ -70,6 +80,12 @@ public class MainActivity extends AppCompatActivity implements OnRestaurantListS
 
     private static final int MY_PERMISSION_REQUEST_LOCATION = 1;
 
+    String loc = "";
+
+    private  PlaceAutocompleteFragment autocompleteFragment;
+    private AppCompatEditText mLocationTxt;
+    private TextView mEmptyResTxt;
+
 
 
     @Override
@@ -80,9 +96,20 @@ public class MainActivity extends AppCompatActivity implements OnRestaurantListS
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+      autocompleteFragment  = (PlaceAutocompleteFragment)
+                getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
+
+      mLocationTxt =   ((AppCompatEditText)this
+              .findViewById(R.id.place_autocomplete_search_input));
+
+      mEmptyResTxt = (TextView)findViewById(R.id.tv_ac_main_empty_recycler_view);
+      mEmptyResTxt.setVisibility(View.INVISIBLE);
+
+
+
         mListSelected=MainActivity.this;
         mCusCircleimage = (CircleImageView)findViewById(R.id.civ_app_bar_thumb_image);
-        mUserAddress = (TextView)findViewById(R.id.current_city_address);
+      //  mUserAddress = (TextView)findViewById(R.id.current_city_address);
 
 
         mAuth = FirebaseAuth.getInstance();
@@ -98,15 +125,17 @@ public class MainActivity extends AppCompatActivity implements OnRestaurantListS
         };
 
 
-        mDatabaseReference = FirebaseDatabase.getInstance().getReference().child("restaurants");
+        mDatabaseRestaurant = FirebaseDatabase.getInstance().getReference().child("restaurants");
         mDatabaseUser = FirebaseDatabase.getInstance().getReference().child("users");
 
-        mDatabaseReference.keepSynced(true);
+        mDatabaseRestaurant.keepSynced(true);
         mDatabaseUser.keepSynced(true);
 
 
 
         setAddress();
+
+        autocompleteFragment.setText(loc);
 
         mRecyclerView = (RecyclerView) findViewById(R.id.main_recycler_view);
         mRecyclerView.setHasFixedSize(true);
@@ -114,7 +143,72 @@ public class MainActivity extends AppCompatActivity implements OnRestaurantListS
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
 
+        autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+            @Override
+            public void onPlaceSelected(Place place) {
+                String placeName = place.getName().toString();
+                Log.d("PLACE",placeName);
 
+                loadRestaurantList(placeName);
+
+            }
+
+            @Override
+            public void onError(Status status) {
+
+            }
+        });
+
+
+
+    }
+
+    private void loadRestaurantList(String placeName) {
+
+        FirebaseRecyclerAdapter<Restaurant,RestaurantViewHolder> firebaseRecyclerAdapter=new FirebaseRecyclerAdapter<Restaurant, RestaurantViewHolder>(
+                Restaurant.class,
+                R.layout.cardview_res_list,
+                RestaurantViewHolder.class,
+                mDatabaseRestaurant.orderByChild("city").equalTo(placeName)
+
+        ) {
+            @Override
+            protected void populateViewHolder(RestaurantViewHolder viewHolder, Restaurant model, int position) {
+
+                String key=getRef(position).getKey();
+
+                viewHolder.key=key;
+                viewHolder.setName(model.getTitle());
+                viewHolder.setImage(model.getImage());
+                viewHolder.setCity(model.getCity());
+                viewHolder.setResType(model.getType());
+                viewHolder.setResTime(model.getTime());
+                viewHolder.mOnRestaurantListSelected=mListSelected;
+
+            }
+        };
+
+        mRecyclerView.setAdapter(firebaseRecyclerAdapter);
+
+
+        mDatabaseRestaurant.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if(!dataSnapshot.hasChildren()){
+
+                    mEmptyResTxt.setVisibility(View.VISIBLE);
+
+                }else{
+                    mEmptyResTxt.setVisibility(View.INVISIBLE);
+
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 
     @Override
@@ -151,7 +245,7 @@ public class MainActivity extends AppCompatActivity implements OnRestaurantListS
                 Restaurant.class,
                 R.layout.cardview_res_list,
                 RestaurantViewHolder.class,
-                mDatabaseReference
+                mDatabaseRestaurant
 
         ) {
             @Override
@@ -162,12 +256,35 @@ public class MainActivity extends AppCompatActivity implements OnRestaurantListS
                 viewHolder.key=key;
                 viewHolder.setName(model.getTitle());
                 viewHolder.setImage(model.getImage());
+                viewHolder.setCity(model.getCity());
+                viewHolder.setResType(model.getType());
+                viewHolder.setResTime(model.getTime());
                 viewHolder.mOnRestaurantListSelected=mListSelected;
 
             }
         };
 
         mRecyclerView.setAdapter(firebaseRecyclerAdapter);
+
+
+        mDatabaseRestaurant.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if(!dataSnapshot.hasChildren()){
+
+                    mEmptyResTxt.setVisibility(View.VISIBLE);
+
+                }else{
+                    mEmptyResTxt.setVisibility(View.INVISIBLE);
+
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
 
     }
 
@@ -243,6 +360,23 @@ public class MainActivity extends AppCompatActivity implements OnRestaurantListS
                     .into(imageView);
 
         }
+
+
+        public void setCity(String city){
+            TextView cityTxt = (TextView) mView.findViewById(R.id.cardview_res_list_place);
+            cityTxt.setText(city);
+        }
+
+        public void setResType(String type){
+            TextView typeTxt = (TextView) mView.findViewById(R.id.cardview_res_type);
+            typeTxt.setText(type);
+        }
+
+        public void setResTime(String time){
+            TextView timeTxt = (TextView) mView.findViewById(R.id.tv_cv_res_list_time);
+            timeTxt.setText(time);
+        }
+
         @Override
         public void onClick(View view) {
            mOnRestaurantListSelected.onRestaurantItemSelected(key);
@@ -312,19 +446,37 @@ public class MainActivity extends AppCompatActivity implements OnRestaurantListS
     // get closest city name
 
 
-    private String getCityName(double lat, double lon){
+    private String getCityName(final double lat, final double lon){
 
         String currentCity = " ";
         String countryName = "";
 
 
-        Geocoder geocoder = new Geocoder(MainActivity.this, Locale.getDefault());
+        final Geocoder geocoder = new Geocoder(MainActivity.this, Locale.getDefault());
         List<Address> addressList;
         try {
             addressList = geocoder.getFromLocation(lat,lon,1);
             if(addressList.size() > 0 ){
                 currentCity = addressList.get(0).getLocality();
                 countryName = addressList.get(0).getCountryName();
+
+                Map<String,Object> city_country = new HashMap<>();
+                city_country.put("city",currentCity);
+                city_country.put("country",countryName);
+                city_country.put("city_country",currentCity+"_"+countryName);
+
+                if(mAuth.getCurrentUser() != null) {
+                    mDatabaseUser.child(mAuth.getCurrentUser().getUid()).updateChildren(city_country).addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            GeoFire geoFire = new GeoFire(mDatabaseUser.child(mAuth.getCurrentUser().getUid()));
+                            geoFire.setLocation("latlng",new GeoLocation(lat,lon));
+                        }
+                    });
+
+
+                }
+
             }
 
         } catch (IOException e) {
@@ -363,7 +515,19 @@ public class MainActivity extends AppCompatActivity implements OnRestaurantListS
 
                 try {
 
-                    mUserAddress.setText(getCityName(location.getLatitude(), location.getLongitude()));
+   //                 mUserAddress.setText(getCityName(location.getLatitude(), location.getLongitude()));
+                //  autocompleteFragment.setText(getCityName(location.getLatitude(), location.getLongitude()));
+
+                     loc = getCityName(location.getLatitude(), location.getLongitude());
+
+                    ((AppCompatEditText)this
+                            .findViewById(R.id.place_autocomplete_search_input)).setText(loc);
+
+                    mLocationTxt.setTextSize(20);
+
+
+
+
                 }catch (Exception e){
                     Toast.makeText(MainActivity.this,"Location Not Found",Toast.LENGTH_SHORT).show();
                 }
@@ -371,6 +535,9 @@ public class MainActivity extends AppCompatActivity implements OnRestaurantListS
             }else{
 
                 Toast.makeText(MainActivity.this,"Location Not Found",Toast.LENGTH_SHORT).show();
+
+                ((AppCompatEditText)this
+                        .findViewById(R.id.place_autocomplete_search_input)).setText("Location not found");
             }
 
 
@@ -398,7 +565,10 @@ public class MainActivity extends AppCompatActivity implements OnRestaurantListS
 
                         try {
 
-                            mUserAddress.setText(getCityName(location.getLatitude(), location.getLongitude()));
+                          //  mUserAddress.setText(getCityName(location.getLatitude(), location.getLongitude()));
+
+                            autocompleteFragment.setText(getCityName(location.getLatitude(), location.getLongitude()));
+                           // loc = getCityName(location.getLatitude(), location.getLongitude());
 
                         }catch (Exception e){
                             Toast.makeText(MainActivity.this,"Location not found",Toast.LENGTH_SHORT).show();

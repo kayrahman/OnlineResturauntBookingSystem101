@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -28,7 +29,7 @@ public class LoginActivity extends AppCompatActivity {
     private EditText mEmailField;
     private EditText mPasswordField;
     private Button mLoginBtn;
-    private Button mRegisterBtn;
+    private TextView mRegisterBtn;
 
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mListener;
@@ -51,7 +52,7 @@ public class LoginActivity extends AppCompatActivity {
         mPasswordField=(EditText)findViewById(R.id.login_input_password);
 
         mLoginBtn=(Button)findViewById(R.id.main_login_button);
-        mRegisterBtn=(Button)findViewById(R.id.activity_login_register_button);
+        mRegisterBtn=(TextView) findViewById(R.id.activity_login_register_button);
 
         mRegisterBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -99,7 +100,7 @@ public class LoginActivity extends AppCompatActivity {
                 }else{
 
                     mProgressDialog.dismiss();
-                    Toast.makeText(LoginActivity.this,"Something went wrong",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(LoginActivity.this,"Check email and password",Toast.LENGTH_SHORT).show();
                 }
 
             }
@@ -113,23 +114,34 @@ public class LoginActivity extends AppCompatActivity {
         mDatabaseReference.child(user_id).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                if(dataSnapshot.hasChild("address")){
 
+                String user_type = "";
 
+                if (dataSnapshot.hasChild("user_type")) {
 
+                    user_type = dataSnapshot.child("user_type").getValue().toString();
 
-                    Intent intent =new Intent(LoginActivity.this,MainActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    startActivity(intent);
+                    if (user_type.equals("manager")) {
 
-                }
-                else {
-                    Intent setupIntent = new Intent(LoginActivity.this, AccountSetUpActivity.class);
-                    setupIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    setupIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(setupIntent);
-                    finish();
+                        Toast.makeText(LoginActivity.this, "Email is not registered as a customer.", Toast.LENGTH_SHORT).show();
 
+                    } else if (user_type.equals("customer")) {
+
+                        if (dataSnapshot.hasChild("address")) {
+
+                            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                            startActivity(intent);
+
+                        } else {
+                            Intent setupIntent = new Intent(LoginActivity.this, AccountSetUpActivity.class);
+                            setupIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                            setupIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            startActivity(setupIntent);
+                            finish();
+
+                        }
+                    }
                 }
             }
 

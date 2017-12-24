@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/OnlineResturauntBookingSystem.iml" filepath="$PROJECT_DIR$/OnlineResturauntBookingSystem.iml" />
+      <module fileurl="file://$PROJECT_DIR$/OnlineResturauntBookingSystem101.iml" filepath="$PROJECT_DIR$/OnlineResturauntBookingSystem101.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>

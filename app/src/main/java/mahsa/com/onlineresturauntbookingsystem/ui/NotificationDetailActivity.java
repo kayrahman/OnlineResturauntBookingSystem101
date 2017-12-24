@@ -17,6 +17,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
+import org.w3c.dom.Text;
+
+import java.security.Key;
 import java.util.HashMap;
 
 import mahsa.com.onlineresturauntbookingsystem.R;
@@ -29,13 +32,14 @@ public class NotificationDetailActivity extends AppCompatActivity {
     private TextView mNumPersons;
     private TextView mTime;
     private TextView mDate;
-    private Button mConfirmBtn;
-    private Button mRejectBtn;
-
+    private TextView mResName;
     private FirebaseAuth mAuth;
+
+
     private DatabaseReference mBookingRef;
     private DatabaseReference mUserRef;
     private DatabaseReference mNotificationRef;
+    private DatabaseReference mRestaurantRef;
 
     private FirebaseUser mFirebaseUser;
 
@@ -54,8 +58,8 @@ public class NotificationDetailActivity extends AppCompatActivity {
       //  cus_key = getIntent().getStringExtra(FROM_USER_KEY);
 //        Log.d("CUS_KEY", cus_key);
 
-   //     String KEY= getIntent().getExtras().get("fromUserId").toString();
-  //      Log.d("KEY", KEY);
+        String KEY= getIntent().getExtras().get("fromUserId").toString();
+        Log.d("KEY", KEY);
 
 
         Bundle bundle = getIntent().getExtras();
@@ -73,8 +77,9 @@ public class NotificationDetailActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
         mFirebaseUser = FirebaseAuth.getInstance().getCurrentUser();
-        mBookingRef = FirebaseDatabase.getInstance().getReference().child("booking").child(mAuth.getCurrentUser().getUid()).child(cus_key);
-        mNotificationRef=FirebaseDatabase.getInstance().getReference().child("notifications");
+        mBookingRef = FirebaseDatabase.getInstance().getReference().child("confirmed_booking").child(KEY).child(mAuth.getCurrentUser().getUid());
+        mNotificationRef=FirebaseDatabase.getInstance().getReference().child("notificationsToCustomer");
+        mRestaurantRef = FirebaseDatabase.getInstance().getReference().child("restaurants").child(KEY);
 
 
         mCusImage = (ImageView) findViewById(R.id.iv_ac_notification_user_image);
@@ -82,9 +87,7 @@ public class NotificationDetailActivity extends AppCompatActivity {
         mNumPersons = (TextView) findViewById(R.id.tv_ac_noti_persons);
         mTime = (TextView) findViewById(R.id.tv_ac_noti_time);
         mDate = (TextView) findViewById(R.id.tv_ac_noti_date);
-        mConfirmBtn = (Button) findViewById(R.id.btn_confirm_notification);
-        mRejectBtn = (Button) findViewById(R.id.btn_reject_notification);
-
+        mResName = (TextView)findViewById(R.id.tv_ac_noti_booking_res_name);
 
         mBookingRef.addValueEventListener(new ValueEventListener() {
             @Override
@@ -92,19 +95,15 @@ public class NotificationDetailActivity extends AppCompatActivity {
 
                 String time = (String) dataSnapshot.child("time").getValue();
                 String date = (String) dataSnapshot.child("date").getValue();
-                String numOfPersons = (String) dataSnapshot.child("persons").getValue();
+                String numOfPersons = (String) dataSnapshot.child("person").getValue();
                 String name = (String) dataSnapshot.child("username").getValue();
-                String image = (String) dataSnapshot.child("image").getValue();
+
 
                 mCusName.setText(name);
                 mTime.setText(time);
                 mDate.setText(date);
                 mNumPersons.setText(numOfPersons);
 
-                Picasso.with(NotificationDetailActivity.this)
-                        .load(image)
-                        .placeholder(R.drawable.male)
-                        .into(mCusImage);
 
             }
 
@@ -115,31 +114,34 @@ public class NotificationDetailActivity extends AppCompatActivity {
         });
 
 
-        mConfirmBtn.setOnClickListener(new View.OnClickListener() {
+        mRestaurantRef.addValueEventListener(new ValueEventListener() {
             @Override
-            public void onClick(View view) {
+            public void onDataChange(DataSnapshot dataSnapshot) {
 
-                mBookingRef.child("confirmed").setValue("true");
 
-                HashMap<String,String> notificationData = new HashMap<String, String>();
-                notificationData.put("from",mAuth.getCurrentUser().getUid());
-                notificationData.put("type","booking");
+                String resTitle = (String) dataSnapshot.child("title").getValue();
 
-                mNotificationRef.child(cus_key).push().setValue(notificationData);
+                mResName.setText(resTitle);
+
+
+
+                String image = (String) dataSnapshot.child("image").getValue();
+
+                Picasso.with(NotificationDetailActivity.this)
+                        .load(image)
+                        .placeholder(R.drawable.male)
+                        .into(mCusImage);
 
 
 
             }
-        });
 
-
-        mRejectBtn.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-
+            public void onCancelled(DatabaseError databaseError) {
 
             }
         });
+
 
 
     }

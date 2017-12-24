@@ -45,7 +45,7 @@ public class RestaurantDetailActivity extends AppCompatActivity {
 
 
 
-    private DatabaseReference mDatabaseReference;
+    private DatabaseReference mDatabaseRestaurants;
 
     private DatabaseReference mMenuDatabaseReference;
     private DatabaseReference mPhotosDatabase;
@@ -68,6 +68,8 @@ public class RestaurantDetailActivity extends AppCompatActivity {
 
     public static final String VIEWPAGER_FRAGMENT="viewpager_fragment";
     public static final String RATEUS_FRAGMENT="rateus_fragment";
+
+
 
 
     @Override
@@ -101,16 +103,16 @@ public class RestaurantDetailActivity extends AppCompatActivity {
 
 
         mPhotosDatabase = FirebaseDatabase.getInstance().getReference().child("photos").child(res_key);
-        mDatabaseReference = FirebaseDatabase.getInstance().getReference().child("restaurants");
+        mDatabaseRestaurants = FirebaseDatabase.getInstance().getReference().child("restaurants");
         mPhotosDatabase.keepSynced(true);
-        mDatabaseReference.keepSynced(true);
+        mDatabaseRestaurants.keepSynced(true);
 
-        mDatabaseReference.child(res_key).addValueEventListener(new ValueEventListener() {
+        mDatabaseRestaurants.child(res_key).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
-                if (dataSnapshot.hasChild("name")) {
-                    title = (String) dataSnapshot.child("name").getValue();
+                if (dataSnapshot.hasChild("title")) {
+                    title = (String) dataSnapshot.child("title").getValue();
                     mCollapsingToolbarLayout.setTitle(title);
                     getSupportActionBar().setTitle(title);
                 }else{

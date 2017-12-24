@@ -26,15 +26,7 @@
         android:textSize="18sp"
         />
 
-        <Button
-            android:id="@+id/fragment_booking_confirm_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Confirm Booking"
-            android:background="#fff"
-            android:textColor="@color/colorPrimary"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentStart="true"/>
+
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -70,11 +62,40 @@
             android:layout_height="wrap_content"
             android:verticalScrollbarPosition="right"
             android:layout_weight="1"
-            android:background="#fff"
             android:text="Select Date"
             android:fontFamily="sans-serif-small"
+            android:background="@drawable/button"
+            android:padding="4dp"
+            android:textColor="#FFFFFF"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentStart="true"
+            android:gravity="center"
+            android:layout_centerHorizontal="true"
+            android:minWidth="0dp"
+            android:minHeight="0dp"
+            android:drawableLeft="@drawable/ic_perm_contact_calendar_white_24dp"
+
             >
         </Button>
+
+
+        <Button
+            android:id="@+id/fragment_booking_confirm_btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minWidth="0dp"
+            android:minHeight="0dp"
+            android:text="Confirm Booking"
+            android:background="@drawable/button"
+            android:padding="4dp"
+            android:textColor="#FFFFFF"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentStart="true"
+            android:gravity="center"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="8dp"
+
+            />
 
 
     </LinearLayout>
@@ -106,13 +127,52 @@
                   android:layout_below="@+id/text1"
             />
 
-        <TextView
-            android:layout_width="wrap_content"
+
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/map"
-            android:text="Address"
+            android:orientation="horizontal"
+            android:gravity="center"
+            >
 
-            />
+            <TextView
+                android:id="@+id/tv_fm_booking_distance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0 "
+
+
+                />
+
+            <TextView
+                android:id="@+id/tv_fm_booking_distance_mile_kilo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/map"
+                android:text="mile/km"
+
+
+                />
+
+            <TextView
+                android:id="@+id/tv_fm_booking_distance_hc"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/map"
+                android:text="away"
+                android:layout_marginLeft="8dp"
+                android:textSize="15sp"
+                android:gravity="center"
+
+
+                />
+
+        </LinearLayout>
+
+
+
+
 
     </RelativeLayout>
 

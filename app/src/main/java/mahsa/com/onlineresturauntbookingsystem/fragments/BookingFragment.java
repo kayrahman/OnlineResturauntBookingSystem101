@@ -2,7 +2,9 @@ package mahsa.com.onlineresturauntbookingsystem.fragments;
 
 
 import android.app.DatePickerDialog;
+import android.location.Location;
 import android.support.annotation.NonNull;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.DialogFragment;
 import android.os.Build;
 import android.os.Bundle;
@@ -10,6 +12,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.TextViewCompat;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,6 +42,8 @@ import org.w3c.dom.Text;
 
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import mahsa.com.onlineresturauntbookingsystem.R;
 import mahsa.com.onlineresturauntbookingsystem.model.Restaurant;
@@ -59,8 +64,11 @@ public class BookingFragment extends Fragment implements OnMapReadyCallback {
     private Calendar mCalendar;
 
     private GoogleMap mGoogleMap;
+    private LatLng userLatLng ;
+    private LatLng resLatLng;
 
     // UI ELEMENTS
+    private TextView mDistance;
     private TextView mPhone;
     private TextView mPrice;
     private TextView mCuisine;
@@ -69,20 +77,23 @@ public class BookingFragment extends Fragment implements OnMapReadyCallback {
     private TextView mDressCode;
     private TextView mParking;
     private TextView mDescription;
+    private TextView mDistanceMileKilo;
     private Button confirmBookingBtn;
 
     //INITIALIZING FIREBASE
 
-    private DatabaseReference mReference;
+    private DatabaseReference mDatabaseRestaurants;
     private DatabaseReference mBookingReference;
     private DatabaseReference mNotificationRef;
     private DatabaseReference mDatabaseUser;
+
 
 
     private FirebaseAuth mAuth;
 
     String key_res="";
     String key_manager="";
+    String mRestaurantTitle = "";
 
 
 
@@ -96,6 +107,7 @@ public class BookingFragment extends Fragment implements OnMapReadyCallback {
                              Bundle savedInstanceState) {
 
         mAuth=FirebaseAuth.getInstance();
+
 
          key_res=getArguments().getString(RESTAURANT_KEY);
       //  Toast.makeText(getActivity(),post_key,Toast.LENGTH_LONG).show();
@@ -144,6 +156,8 @@ public class BookingFragment extends Fragment implements OnMapReadyCallback {
         mapFragment.getMapAsync(this);
 
         //INITIALIZING UI ELEMENTS
+        mDistanceMileKilo = (TextView)view.findViewById(R.id.tv_fm_booking_distance_mile_kilo);
+        mDistance = (TextView)view.findViewById(R.id.tv_fm_booking_distance);
         mPhone=(TextView)view.findViewById(R.id.fragment_booking_phone);
         mPrice=(TextView)view.findViewById(R.id.fragment_booking_price);
         mCuisine=(TextView)view.findViewById(R.id.fragment_booking_cuisine);
@@ -155,24 +169,25 @@ public class BookingFragment extends Fragment implements OnMapReadyCallback {
         confirmBookingBtn=(Button)view.findViewById(R.id.fragment_booking_confirm_btn);
 
         //INITIALIZING FIREBASE
-        mReference= FirebaseDatabase.getInstance().getReference().child("restaurants");
-        mBookingReference=FirebaseDatabase.getInstance().getReference().child("booking");
+        mDatabaseRestaurants= FirebaseDatabase.getInstance().getReference().child("restaurants");
+        mBookingReference=FirebaseDatabase.getInstance().getReference().child("pending_booking");
         mNotificationRef=FirebaseDatabase.getInstance().getReference().child("notifications");
         mDatabaseUser = FirebaseDatabase.getInstance().getReference().child("users").child(mAuth.getCurrentUser().getUid());
 
         if(key_res!=null) {
 
-            mReference.child(key_res).addValueEventListener(new ValueEventListener() {
+            mDatabaseRestaurants.child(key_res).addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     String phone = (String) dataSnapshot.child("phone").getValue();
                     String cuisine = (String) dataSnapshot.child("cuisine").getValue();
                     String price = (String) dataSnapshot.child("price").getValue();
-                    String hours = (String) dataSnapshot.child("hours").getValue();
+                    String hours = (String) dataSnapshot.child("time").getValue();
                     String paymentOptions = (String) dataSnapshot.child("payment_options").getValue();
                     String dressCode = (String) dataSnapshot.child("dress_code").getValue();
                     String parking = (String) dataSnapshot.child("parking").getValue();
-                    String desc = (String) dataSnapshot.child("description").getValue();
+                    String desc = (String) dataSnapshot.child("desc").getValue();
+                    mRestaurantTitle =(String)dataSnapshot.child("title").getValue();
                     key_manager=(String)dataSnapshot.child("manager_key").getValue();
 
 
@@ -202,14 +217,12 @@ public class BookingFragment extends Fragment implements OnMapReadyCallback {
             @Override
             public void onClick(View view) {
 
+
                 updateBookingDetailInFirebase();
 
 
-                HashMap<String,String> notificationData = new HashMap<String, String>();
-                notificationData.put("from",mAuth.getCurrentUser().getUid());
-                notificationData.put("type","booking");
 
-                mNotificationRef.child(key_res).push().setValue(notificationData);
+
 
             }
         });
@@ -225,28 +238,54 @@ public class BookingFragment extends Fragment implements OnMapReadyCallback {
         if(!TextUtils.isEmpty(mPersonSpinner.getSelectedItem().toString()) && !TextUtils.isEmpty(mTimeSpinner.getSelectedItem().toString()) &&!TextUtils.isEmpty(mDateBtn.getText().toString())){
 
 
-
             mDatabaseUser.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
 
-                    String username = dataSnapshot.child("name").getValue().toString();
-                    String image = dataSnapshot.child("image").getValue().toString();
+                    final String username = dataSnapshot.child("name").getValue().toString();
+                    final String image = dataSnapshot.child("image").getValue().toString();
 
 
-                    DatabaseReference newPost= mBookingReference.child(key_res).child(mAuth.getCurrentUser().getUid());
-                    newPost.child("username").setValue(username);
-                    newPost.child("time").setValue(mTimeSpinner.getSelectedItem().toString());
-                    newPost.child("date").setValue(mDateBtn.getText().toString());
-                    newPost.child("person").setValue(mPersonSpinner.getSelectedItem().toString());
-                    newPost.child("image").setValue(image);
-                    newPost.child("confirmed").setValue(false);
+                    mBookingReference.child(key_res).addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+
+                            if(!dataSnapshot.hasChild(mAuth.getCurrentUser().getUid())){
+                                DatabaseReference newPost= mBookingReference.child(key_res).child(mAuth.getCurrentUser().getUid());
 
 
-                    Toast.makeText(getActivity().getApplicationContext(),"You have booked table for"+mPersonSpinner.getSelectedItem().toString() +"at"+mTimeSpinner.getSelectedItem().toString()+"On"+mDateBtn.getText().toString()
+                                newPost.child("username").setValue(username);
+                                newPost.child("time").setValue(mTimeSpinner.getSelectedItem().toString());
+                                newPost.child("date").setValue(mDateBtn.getText().toString());
+                                newPost.child("person").setValue(mPersonSpinner.getSelectedItem().toString());
+                                newPost.child("image").setValue(image);
+                                newPost.child("confirmed").setValue(false);
 
-                            ,Toast.LENGTH_LONG).show();
 
+                                HashMap<String,String> notificationData = new HashMap<String, String>();
+                                notificationData.put("from",mAuth.getCurrentUser().getUid());
+                                notificationData.put("type","booking");
+
+                                mNotificationRef.child(key_res).push().setValue(notificationData);
+
+
+                                Toast.makeText(getActivity().getApplicationContext(),"You have booked table for"+mPersonSpinner.getSelectedItem().toString() +"at"+mTimeSpinner.getSelectedItem().toString()+"On"+mDateBtn.getText().toString()
+
+                                        ,Toast.LENGTH_LONG).show();
+
+
+
+                            }else{
+                                Toast.makeText(getActivity().getApplicationContext(),"Already request pending" ,Toast.LENGTH_SHORT).show();
+
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
 
 
                 }
@@ -256,36 +295,6 @@ public class BookingFragment extends Fragment implements OnMapReadyCallback {
 
                 }
             });
-
-
-
-
-          /*  mBookingReference.child(key_res).addValueEventListener(new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    DatabaseReference newPost= mBookingReference.child(key_res).child(mAuth.getCurrentUser().getUid());
-                    newPost.child("username").setValue();
-                    newPost.child("time").setValue(mTimeSpinner.getSelectedItem().toString());
-                    newPost.child("date").setValue(mDateBtn.getText().toString());
-                    newPost.child("person").setValue(mPersonSpinner.getSelectedItem().toString());
-                    newPost.child("confirmed").setValue(false);
-
-
-                    Toast.makeText(getActivity().getApplicationContext(),"You have booked table for"+mPersonSpinner.getSelectedItem().toString() +"at"+mTimeSpinner.getSelectedItem().toString()+"On"+mDateBtn.getText().toString()
-
-                            ,Toast.LENGTH_LONG).show();
-
-
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-
-                }
-            });
-*/
-
-
 
         }else{
             Toast.makeText(getActivity().getApplicationContext(),"Please Select date,time and person carefully",Toast.LENGTH_SHORT).show();
@@ -297,13 +306,125 @@ public class BookingFragment extends Fragment implements OnMapReadyCallback {
 
         mGoogleMap=googleMap;
 
-        LatLng rl=new LatLng(3.048365,101.692924);
-        MarkerOptions markerOptions=new MarkerOptions();
-        markerOptions.position(rl).title("Restaurant");
-        mGoogleMap.addMarker(markerOptions);
-        mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(rl,10));
+      getRestaurantLocation();
 
 
 
     }
+
+
+    private void getRestaurantLocation() {
+
+        mDatabaseUser.child("latlng").child("l").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if(dataSnapshot.exists()){
+
+                    List<Object> map = (List<Object>) dataSnapshot.getValue();
+                    double locationLat = 0;
+                    double locationLng = 0;
+
+                    if(map.get(0) != null) {
+                        locationLat = Double.parseDouble(map.get(0).toString());
+                    }
+                    if(map.get(1) != null){
+                        locationLng = Double.parseDouble(map.get(1).toString());
+                    }
+
+                    userLatLng = new LatLng(locationLat,locationLng);
+                    Log.d("USER_LATLNG",   String.valueOf(userLatLng));
+
+                    MarkerOptions markerOptions=new MarkerOptions();
+                    markerOptions.position(userLatLng).title("You");
+                    mGoogleMap.addMarker(markerOptions);
+                    mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(userLatLng,10));
+
+
+                }
+
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+
+        mDatabaseRestaurants.child(key_res).child("latlng").child("l").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                if(dataSnapshot.exists()){
+
+                    List<Object> map = (List<Object>) dataSnapshot.getValue();
+                    double locationLat = 0;
+                    double locationLng = 0;
+
+                    if(map.get(0) != null) {
+                        locationLat = Double.parseDouble(map.get(0).toString());
+                    }
+                    if(map.get(1) != null){
+                        locationLng = Double.parseDouble(map.get(1).toString());
+                    }
+
+                    resLatLng = new LatLng(locationLat,locationLng);
+
+                    Log.d("RES_LATLNG",   String.valueOf(userLatLng));
+
+                    MarkerOptions markerOptions=new MarkerOptions();
+                    if(!TextUtils.isEmpty(mRestaurantTitle)) {
+                        markerOptions.position(resLatLng).title(mRestaurantTitle);
+                    }else {
+                        markerOptions.position(resLatLng).title("Restaurant");
+                    }
+                    mGoogleMap.addMarker(markerOptions);
+                    mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(resLatLng,10));
+
+
+                }
+
+                if(userLatLng != null) {
+
+
+                    Location selfLoc = new Location("");
+                    selfLoc.setLatitude(userLatLng.latitude);
+                    selfLoc.setLongitude(userLatLng.longitude);
+
+
+                    Location resLocation = new Location("");
+                    resLocation.setLatitude(resLatLng.latitude);
+                    resLocation.setLongitude(resLatLng.longitude);
+
+                    float distance = selfLoc.distanceTo(resLocation);
+                    Log.d("DISTANCE", String.valueOf(distance));
+
+
+                    if (distance > 1000) {
+
+                        // String test = String.format("%.02f", f);
+                        mDistance.setText(String.format("%.02f", distance / 1000));
+                        mDistanceMileKilo.setText(" mile");
+                    } else {
+                        mDistance.setText(String.format("%.02f", distance));
+                        mDistanceMileKilo.setText("meter");
+
+                    }
+
+                }else{
+                    mDistanceMileKilo.setText(" User location not found. Please turn on the location from your device");
+
+                }
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+    }
+
 }

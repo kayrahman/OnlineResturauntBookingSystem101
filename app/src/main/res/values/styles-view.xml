@@ -11,7 +11,7 @@
         <item name="android:inputType">textCapWords</item>
         <item name="android:gravity">center_horizontal</item>
         <item name="android:textColorHint">@color/colorText</item>
-        <item name="android:backgroundTint">@color/colorEditText</item>
+        <item name="android:backgroundTint">@color/colorText</item>
     </style>
 
     <style name="InputField.Credential.Name">
@@ -38,7 +38,8 @@
         <item name="android:layout_marginRight">@dimen/horizontal_widget_margin</item>
         <item name="android:gravity">center</item>
         <item name="android:fontFamily">sans-serif-medium</item>
-        <item name="android:textColor">@color/colorText</item>
+        <item name="android:textColor">@color/colorWhite</item>
+        <item name="background">@drawable/button</item>
 
     </style>
 

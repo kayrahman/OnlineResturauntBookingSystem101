@@ -41,7 +41,7 @@ public class MenuFragment extends Fragment {
 
         post_key=getArguments().getString(RESTAURANT_KEY);
 
-        mDatabaseReference = FirebaseDatabase.getInstance().getReference().child("Menu").child(post_key);
+        mDatabaseReference = FirebaseDatabase.getInstance().getReference().child("menu").child(post_key);
         mListView=(ListView)v.findViewById(R.id.list_item);
 
 

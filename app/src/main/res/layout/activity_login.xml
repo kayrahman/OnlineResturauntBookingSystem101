@@ -45,24 +45,26 @@
         android:id="@+id/main_login_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/btn_background"
+        android:background="#FFFFFF"
         android:text="Login"
+        android:textColor="@color/colorPrimaryDark"
         style="@style/btnStyle"
-        android:textColor="@color/colorText"
         android:layout_below="@+id/login_input_password"
         android:layout_marginTop="12dp"
+        android:elevation="4dp"
         />
 
 
-    <Button
+    <TextView
         android:id="@+id/activity_login_register_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/btn_background"
-        android:text="Need a new account"
-        style="@style/btnStyle"
+        android:text="Need a new account? Sign up "
+        android:textAllCaps="true"
         android:textColor="@color/colorText"
         android:layout_alignParentBottom="true"
+        android:gravity="center"
+        android:layout_marginBottom="16dp"
 
         />
 

@@ -8,17 +8,16 @@ public class Restaurant {
 
     private String image;
     private String title;
-    private String location;
-    private String hours;
     private String cuisine;
     private String description;
     private String dress_code;
-    private double latitude;
-    private double longtitude;
     private String parking;
     private String payment_options;
     private String phone;
     private String price;
+    private String city;
+    private String type;
+    private String time;
 
 
 
@@ -27,6 +26,13 @@ public class Restaurant {
     public Restaurant() {
     }
 
+    public String getTime() {
+        return time;
+    }
+
+    public void setTime(String time) {
+        this.time = time;
+    }
 
     public String getImage() {
         return image;
@@ -42,22 +48,6 @@ public class Restaurant {
 
     public void setTitle(String title) {
         this.title = title;
-    }
-
-    public String getLocation() {
-        return location;
-    }
-
-    public void setLocation(String location) {
-        this.location = location;
-    }
-
-    public String getHours() {
-        return hours;
-    }
-
-    public void setHours(String hours) {
-        this.hours = hours;
     }
 
     public String getCuisine() {
@@ -82,22 +72,6 @@ public class Restaurant {
 
     public void setDress_code(String dress_code) {
         this.dress_code = dress_code;
-    }
-
-    public double getLatitude() {
-        return latitude;
-    }
-
-    public void setLatitude(double latitude) {
-        this.latitude = latitude;
-    }
-
-    public double getLongtitude() {
-        return longtitude;
-    }
-
-    public void setLongtitude(double longtitude) {
-        this.longtitude = longtitude;
     }
 
     public String getParking() {
@@ -138,5 +112,21 @@ public class Restaurant {
 
     public void setManager_key(String manager_key) {
         this.manager_key = manager_key;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 }

@@ -46,6 +46,8 @@ import com.theartofdev.edmodo.cropper.CropImageView;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class AccountSetUpActivity extends AppCompatActivity {
 
@@ -233,21 +235,33 @@ public class AccountSetUpActivity extends AppCompatActivity {
 
 
 
+                   Map<String,Object> user_info = new HashMap<>();
+                   user_info.put("address",user_address);
+                    user_info.put("email",user_email);
+                    user_info.put("phone",user_phone);
+                    user_info.put("image",downloaduri.toString());
 
-                    DatabaseReference newPost= mDatabaseUsers;
+                    mDatabaseUsers.updateChildren(user_info).addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+
+                            mDialog.dismiss();
+
+                            Intent intent = new Intent(AccountSetUpActivity.this, MainActivity.class);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            startActivity(intent);
+                            finish();
+                        }
+                    });
+
+
+
+                 /*   DatabaseReference newPost= mDatabaseUsers;
                     newPost.child("address").setValue(user_address);
                     newPost.child("email").setValue(user_email);
                     newPost.child("phone").setValue(user_phone);
-                    newPost.child("image").setValue(downloaduri.toString());
-
-
-                    mDialog.dismiss();
-
-                    Intent intent = new Intent(AccountSetUpActivity.this, MainActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    startActivity(intent);
-                    finish();
+                    newPost.child("image").setValue(downloaduri.toString());*/
 
                 }
             });
